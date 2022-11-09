@@ -962,7 +962,10 @@ class Doc2Map:
             L, H = G.nodes[node]["approx bound"]
             centroid = (G.nodes[node]["y"], G.nodes[node]["x"])
 
-            arial = ImageFont.truetype("arial.ttf", 40)
+            try:
+                font = ImageFont.truetype("arial.ttf", 40)
+            except:
+                font = ImageFont.truetype("DejaVuSans.ttf", 40)
 
             lMot = [unidecode.unidecode(mot) for mot in topic]
 
