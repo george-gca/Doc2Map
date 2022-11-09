@@ -44,7 +44,8 @@ class Doc2Map:
         self.ramification = ramification
         self.tika = False
         self.module_path = os.path.dirname(os.path.realpath(__file__))+"/"
-        self.execution_path = os.path.dirname(sys.argv[0])+"/"
+        # self.execution_path = os.path.dirname(sys.argv[0])+"/"
+        self.execution_path = os.getcwd()+"/"
         self.lemmatizing = lemmatizing
 
         if lemmatizing:
