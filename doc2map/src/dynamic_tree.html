@@ -6,7 +6,7 @@
     <title>Tree Example</title>
 
     <style>
-    
+
     .node {
         cursor: pointer;
     }
@@ -26,14 +26,14 @@
     stroke: #ccc;
     stroke-width: 2px;
     }
-    
+
     </style>
 
 </head>
 
 <body>
 
-<!-- load the d3.js library -->	
+<!-- load the d3.js library -->
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script src="dynamic_tree.js"></script>
 
@@ -132,7 +132,7 @@ var nodeUpdate = nodeEnter.merge(node);
 // Transition to the proper position for the node
 nodeUpdate.transition()
     .duration(duration)
-    .attr("transform", function(d) { 
+    .attr("transform", function(d) {
         return "translate(" + d.y + "," + d.x + ")";
     });
 
