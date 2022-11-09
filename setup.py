@@ -22,7 +22,7 @@ setuptools.setup(
     ],
     python_requires='>=3.5', 
     py_modules=["Doc2Map"],
-    package_dir={'':r'Doc2Map\src'},
+    package_dir={'':r'doc2map\src'},
     install_requires=install_requires,
     #package_data={'': [r'\doc2map\src\Doc2Map.html']},
     #setup_requires=['setuptools_scm'],
