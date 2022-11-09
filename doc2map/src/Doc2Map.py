@@ -438,9 +438,13 @@ class Doc2Map:
         self.tika = False
         self.module_path = os.path.dirname(os.path.realpath(__file__))+"/"
         self.execution_path = os.path.dirname(sys.argv[0])+"/"
-        self.lemmatize = self.Lemmatizer(lLanguage, self.module_path).lemmatize
-        self.lemmatizing = lemmatizing and not(not(self.lemmatize))
-        
+        self.lemmatizing = lemmatizing
+
+        if lemmatizing:
+            self.lemmatize = self.Lemmatizer(lLanguage, self.module_path).lemmatize
+        else:
+            self.lemmatize = None
+
         self.non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
         self.min_count = min_count
         
