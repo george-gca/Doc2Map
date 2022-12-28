@@ -1,3 +1,4 @@
+from string import Template
 from requests.api import options
 from sklearn.datasets import fetch_20newsgroups
 import umap
@@ -48,7 +49,7 @@ class Doc2Map:
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-        <script src="data.js"></script>
+        <script src="data${suffix}.js"></script>
         <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
         <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
         <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
@@ -154,7 +155,7 @@ class Doc2Map:
         });
         map.addControl(new L.Control.Fullscreen());
         map.fitBounds(map_bounds);
-        L.imageOverlay('DocMapdensity.svg', image_bounds).addTo(map);
+        L.imageOverlay('DocMapdensity${suffix}.svg', image_bounds).addTo(map);
         var zoomOffset = map.getZoom(); //-offsetZoom;
         map.options.minZoom = zoomOffset;
         map.options.maxZoom = zoomOffset + max_depth+6;
@@ -626,7 +627,7 @@ class Doc2Map:
         print("Simplified Tree finished")
 
 
-    def scatter(self):
+    def scatter(self, suffix="", display=True):
 
         fig = go.Figure(go.Scatter(
             x=self.lDocEmbedding2D[:,0],
@@ -691,7 +692,7 @@ class Doc2Map:
             //alert('Closest point clicked:\n\n'+pts);
         });"""
 
-        filename=self.execution_path+"Doc2Map_Scatter.html"
+        filename=self.execution_path+f"Doc2Map_Scatter{suffix}.html"
 
         fig.write_html(
             filename,
@@ -703,7 +704,9 @@ class Doc2Map:
                 'scrollZoom': True
             },
         )
-        os.system("start "+os.path.realpath(filename))
+
+        if display:
+            os.system("start "+os.path.realpath(filename))
 
 
 
@@ -907,7 +910,7 @@ class Doc2Map:
         self.simplified_tree = G
 
 
-    def interactive_tree(self, G=None, root=None):
+    def interactive_tree(self, G=None, root=None, suffix="", display=True):
 
         if not G: G=self.simplified_tree
         if not root: root=self.root
@@ -928,20 +931,18 @@ class Doc2Map:
                     ]
                 }
 
-        with open(self.execution_path+"dynamic_tree.json", "w") as f:
+        with open(self.execution_path+f"dynamic_tree{suffix}.json", "w") as f:
             f.write("var treeData = ["+str(recursive(self.root))+"];")
             #json.dump(f, recursive(self.root))
 
-        with open(self.execution_path+"dynamic_tree.html", "w") as f:
+        with open(self.execution_path+f"dynamic_tree{suffix}.html", "w") as f:
             f.write(self.dynamic_tree)
 
-        os.system("start "+os.path.realpath(self.execution_path+"dynamic_tree.html"))
+        if display:
+            os.system("start "+os.path.realpath(self.execution_path+"dynamic_tree.html"))
 
 
-
-
-
-    def plotly_interactive_map(self, G=None, root=None):
+    def plotly_interactive_map(self, G=None, root=None, suffix="", display=True):
 
         def cluster(node, lLeaf, image=True):
 
@@ -1130,7 +1131,7 @@ class Doc2Map:
             //alert('Closest point clicked:\n\n'+pts);
         });"""
 
-        filename = self.execution_path + "PlotlyDocMap.html"
+        filename = self.execution_path + f"PlotlyDocMap{suffix}.html"
         fig.write_html(
             filename,
             post_script=js,
@@ -1142,16 +1143,16 @@ class Doc2Map:
             },
         )
 
-        os.system("start "+os.path.realpath(filename))
+        if display:
+            os.system("start "+os.path.realpath(filename))
 
 
-
-    def interactive_map(self, G=None, root=None):
+    def interactive_map(self, G=None, root=None, suffix="", display=True):
 
         if not G: G=self.simplified_tree
         if not root: root=self.root
 
-        map_background = self.execution_path+"DocMapdensity.svg"
+        map_background = self.execution_path+f"DocMapdensity{suffix}.svg"
 
         fig = self.__2D_density_plot(self.lDocEmbedding2D[:,1], self.lDocEmbedding2D[:,0], 200)
         fig.add_trace(go.Scatter(
@@ -1211,7 +1212,7 @@ class Doc2Map:
         map_bounds = [np.amin(self.lDocEmbedding2D, axis=0).tolist(),
                   np.amax(self.lDocEmbedding2D, axis=0).tolist()]
 
-        with open(self.execution_path+"data.js", 'w', encoding="UTF-8") as file:
+        with open(self.execution_path+f"data{suffix}.js", 'w', encoding="UTF-8") as file:
             file.write(("const root="+str(root)+";"
                         +"\nconst image_bounds="+str(image_bounds)+";"
                         +"\nconst map_bounds="+str(map_bounds)+";"
@@ -1224,21 +1225,22 @@ class Doc2Map:
         # with open(self.module_path+"DocMap.html", 'r') as file:
         #     html = file.read()
 
-        with open(self.execution_path+"DocMap.html", 'w') as file:
-            file.write(self.doc2mapHTML)
+        with open(self.execution_path+f"DocMap{suffix}.html", 'w') as file:
+            file.write(Template(self.doc2mapHTML).safe_substitute({'suffix': suffix}))
 
-        os.system("start "+os.path.realpath(self.execution_path+"DocMap.html"))
-
-
-    def display_tree(self):
-        self.display_graph(self.tree, self.root, "tree.html")
+        if display:
+            os.system("start "+os.path.realpath(self.execution_path+f"DocMap{suffix}.html"))
 
 
-    def display_simplified_tree(self):
-        self.display_graph(self.simplified_tree, self.root, "simplified_tree.html")
+    def display_tree(self, suffix="", display=True):
+        self.display_graph(self.tree, self.root, f"tree{suffix}.html", display)
 
 
-    def display_graph(self, G, root, filename="tree.html"):
+    def display_simplified_tree(self, suffix="", display=True):
+        self.display_graph(self.simplified_tree, self.root, f"simplified_tree{suffix}.html", display)
+
+
+    def display_graph(self, G, root, filename="tree.html", display=True):
 
         dLigne = {"x": [], "y": [], "z":[]}
 
@@ -1379,7 +1381,8 @@ class Doc2Map:
             },
         )
 
-        os.system("start "+os.path.realpath(path))
+        if display:
+            os.system("start "+os.path.realpath(path))
 
 
     @classmethod
