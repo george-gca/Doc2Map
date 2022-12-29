@@ -1,5 +1,4 @@
 from string import Template
-from requests.api import options
 from sklearn.datasets import fetch_20newsgroups
 import umap
 import numpy as np
@@ -42,13 +41,13 @@ class Doc2Map:
     <html>
     <head>
 
-        <title>Layers Control Tutorial - Leaflet</title>
+        <title>${title}</title>
 
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
         <script src="data${suffix}.js"></script>
         <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
         <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
@@ -1226,7 +1225,7 @@ class Doc2Map:
         #     html = file.read()
 
         with open(self.execution_path+f"DocMap{suffix}.html", 'w') as file:
-            file.write(Template(self.doc2mapHTML).safe_substitute({'suffix': suffix}))
+            file.write(Template(self.doc2mapHTML).safe_substitute({'suffix': suffix, 'title': f'Paper Landscape - {" ".join(suffix.split("_")[1:])}'}))
 
         if display:
             os.system("start "+os.path.realpath(self.execution_path+f"DocMap{suffix}.html"))
