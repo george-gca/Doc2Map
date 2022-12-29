@@ -626,7 +626,7 @@ class Doc2Map:
         print("Simplified Tree finished")
 
 
-    def scatter(self, suffix="", display=True):
+    def scatter(self, suffix="", out_dir="", display=True):
 
         fig = go.Figure(go.Scatter(
             x=self.lDocEmbedding2D[:,0],
@@ -691,7 +691,7 @@ class Doc2Map:
             //alert('Closest point clicked:\n\n'+pts);
         });"""
 
-        filename=self.execution_path+f"Doc2Map_Scatter{suffix}.html"
+        filename = self.execution_path + out_dir + f"Doc2Map_Scatter{suffix}.html"
 
         fig.write_html(
             filename,
@@ -705,7 +705,7 @@ class Doc2Map:
         )
 
         if display:
-            os.system("start "+os.path.realpath(filename))
+            os.system("start " + os.path.realpath(filename))
 
 
 
@@ -909,7 +909,7 @@ class Doc2Map:
         self.simplified_tree = G
 
 
-    def interactive_tree(self, G=None, root=None, suffix="", display=True):
+    def interactive_tree(self, G=None, root=None, suffix="", out_dir="", display=True):
 
         if not G: G=self.simplified_tree
         if not root: root=self.root
@@ -930,18 +930,18 @@ class Doc2Map:
                     ]
                 }
 
-        with open(self.execution_path+f"dynamic_tree{suffix}.json", "w") as f:
+        with open(self.execution_path + out_dir + f"dynamic_tree{suffix}.json", "w") as f:
             f.write("var treeData = ["+str(recursive(self.root))+"];")
             #json.dump(f, recursive(self.root))
 
-        with open(self.execution_path+f"dynamic_tree{suffix}.html", "w") as f:
+        with open(self.execution_path + out_dir + f"dynamic_tree{suffix}.html", "w") as f:
             f.write(self.dynamic_tree)
 
         if display:
-            os.system("start "+os.path.realpath(self.execution_path+"dynamic_tree.html"))
+            os.system("start " + os.path.realpath(self.execution_path + out_dir + "dynamic_tree.html"))
 
 
-    def plotly_interactive_map(self, G=None, root=None, suffix="", display=True):
+    def plotly_interactive_map(self, G=None, root=None, suffix="", out_dir="", display=True):
 
         def cluster(node, lLeaf, image=True):
 
@@ -1130,7 +1130,7 @@ class Doc2Map:
             //alert('Closest point clicked:\n\n'+pts);
         });"""
 
-        filename = self.execution_path + f"PlotlyDocMap{suffix}.html"
+        filename = self.execution_path + out_dir + f"PlotlyDocMap{suffix}.html"
         fig.write_html(
             filename,
             post_script=js,
@@ -1143,15 +1143,15 @@ class Doc2Map:
         )
 
         if display:
-            os.system("start "+os.path.realpath(filename))
+            os.system("start " + os.path.realpath(filename))
 
 
-    def interactive_map(self, G=None, root=None, suffix="", display=True):
+    def interactive_map(self, G=None, root=None, suffix="", out_dir="", display=True):
 
         if not G: G=self.simplified_tree
         if not root: root=self.root
 
-        map_background = self.execution_path+f"DocMapdensity{suffix}.svg"
+        map_background = self.execution_path + out_dir + f"DocMapdensity{suffix}.svg"
 
         fig = self.__2D_density_plot(self.lDocEmbedding2D[:,1], self.lDocEmbedding2D[:,0], 200)
         fig.add_trace(go.Scatter(
@@ -1211,7 +1211,7 @@ class Doc2Map:
         map_bounds = [np.amin(self.lDocEmbedding2D, axis=0).tolist(),
                   np.amax(self.lDocEmbedding2D, axis=0).tolist()]
 
-        with open(self.execution_path+f"data{suffix}.js", 'w', encoding="UTF-8") as file:
+        with open(self.execution_path + out_dir + f"data{suffix}.js", 'w', encoding="UTF-8") as file:
             file.write(("const root="+str(root)+";"
                         +"\nconst image_bounds="+str(image_bounds)+";"
                         +"\nconst map_bounds="+str(map_bounds)+";"
@@ -1224,19 +1224,19 @@ class Doc2Map:
         # with open(self.module_path+"DocMap.html", 'r') as file:
         #     html = file.read()
 
-        with open(self.execution_path+f"DocMap{suffix}.html", 'w') as file:
+        with open(self.execution_path + out_dir + f"DocMap{suffix}.html", 'w') as file:
             file.write(Template(self.doc2mapHTML).safe_substitute({'suffix': suffix, 'title': f'Paper Landscape - {" ".join(suffix.split("_")[1:])}'}))
 
         if display:
-            os.system("start "+os.path.realpath(self.execution_path+f"DocMap{suffix}.html"))
+            os.system("start "+os.path.realpath(self.execution_path + out_dir + f"DocMap{suffix}.html"))
 
 
-    def display_tree(self, suffix="", display=True):
-        self.display_graph(self.tree, self.root, f"tree{suffix}.html", display)
+    def display_tree(self, suffix="", out_dir="", display=True):
+        self.display_graph(self.tree, self.root, f"{out_dir}tree{suffix}.html", display)
 
 
-    def display_simplified_tree(self, suffix="", display=True):
-        self.display_graph(self.simplified_tree, self.root, f"simplified_tree{suffix}.html", display)
+    def display_simplified_tree(self, suffix="", out_dir="", display=True):
+        self.display_graph(self.simplified_tree, self.root, f"{out_dir}simplified_tree{suffix}.html", display)
 
 
     def display_graph(self, G, root, filename="tree.html", display=True):
@@ -1357,7 +1357,7 @@ class Doc2Map:
 
         fig.update_scenes(camera_projection_type='orthographic')
 
-        path = self.execution_path+filename
+        path = self.execution_path + filename
 
         js = r"""var myPlot = document.getElementById('{plot_id}');
         myPlot.on('plotly_click', function(data){
@@ -1381,7 +1381,7 @@ class Doc2Map:
         )
 
         if display:
-            os.system("start "+os.path.realpath(path))
+            os.system("start " + os.path.realpath(path))
 
 
     @classmethod
