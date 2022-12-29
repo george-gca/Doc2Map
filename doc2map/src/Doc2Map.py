@@ -978,7 +978,7 @@ class Doc2Map:
                 ligne=" ".join(lMot[:f])
                 lMot2+=[ligne]
                 lMot = lMot[f:]
-                l, h = arial.getsize(ligne)
+                l, h = font.getsize(ligne)
                 lMax = max(l, lMax)
                 hTot += h
             lMot=lMot2
@@ -991,7 +991,7 @@ class Doc2Map:
 
             im = Image.new("RGBA", (l, h), (255,255,255,0))
             d = ImageDraw.Draw(im)
-            d.multiline_text((0, 0), text, spacing=spacing, fill="black", font=arial, align='center')
+            d.multiline_text((0, 0), text, spacing=spacing, fill="black", font=font, align='center')
 
             fig.add_layout_image(
                 dict(
